@@ -5,17 +5,25 @@
       :key="i"
       :defaultX="block.defaultX"
       :defaultY="block.defaultY"
+      :id="block.id"
+      @select="select"
+    />
+
+    <Line
+      v-for="(line, i) of connectionLines"
+      :key="i"
     />
   </div>
 </template>
 
 <script>
 import Block from '@/components/Block';
+import Line from '@/components/Line';
 
 export default {
   name: 'App',
   components: {
-    Block
+    Block, Line
   },
 
   data: () => ({
@@ -35,8 +43,17 @@ export default {
         defaultX: 500,
         defaultY: 50,
       },
-    ]
+    ],
+    
+    connectionLines: [], // Связи между блоками
   }),
+
+  methods: {
+    select(params) {
+      console.log(params)
+      this.connectionLines.push(params);
+    }
+  }
 }
 </script>
 
@@ -49,11 +66,6 @@ export default {
 }
 
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
   position: relative;
 }
 </style>
