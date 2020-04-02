@@ -2,36 +2,40 @@
   <div 
     @mousedown="mousedown"
     @mouseup="mouseup"
-    
+    @dblclick="removeBlock"
     class="block-wrap"
     ref="block"
   > 
 
     <span 
-      @click="selectCircle(1)"
+      @click="selectCircle"
       class="circle-1 circle"
       ref="circle1"
+      direction="1"
     >
     </span>
 
     <span 
+      @click="selectCircle"
       class="circle-2 circle"
-      @click="selectCircle(2)"
       ref="circle2"
+      direction="2"
     >
     </span>
 
     <span 
+      @click="selectCircle"
       class="circle-3 circle"
-      @click="selectCircle(3)"
       ref="circle3"
+      direction="3"
     >
     </span>
 
     <span 
+      @click="selectCircle"
       class="circle-4 circle"
-      @click="selectCircle(4)"
       ref="circle4"
+      direction="4"
     >
     </span>
   </div>
@@ -79,31 +83,57 @@ export default {
       this.$refs.block.style.boxShadow = null;
     },
 
-    moving({x, y}) {
-      this.$refs.block.style.left = `${x - 60}px`;
-      this.$refs.block.style.top = `${y - 60}px`;
+    moving({ x, y }) {
+      const {width, height} = this.$refs.block.getBoundingClientRect();
+
+      this.$refs.block.style.left = `${x - width / 2}px`;
+      this.$refs.block.style.top = `${y - height / 2}px`;
+
+      const circles = [this.$refs.circle1, this.$refs.circle2, this.$refs.circle3, this.$refs.circle4];
+
+      // Мапаем модели узлов
+      const mappedCircles = circles.map(circle => { 
+        return this.mapToCircleModel(circle);
+      })
 
       // Нужно чтобы линии тоже могли дивигаться за блоком
       this.$emit('movingBlock', {
         x, 
-        y, 
-        blockId: this.id
+        y,
+        size: {
+          width,
+          height,
+        },
+        blockId: this.id,
+        circles: mappedCircles,
       });
     },
 
-    selectCircle(circleNumber) {
-      const {x, y} = this.$refs[`circle${circleNumber}`].getBoundingClientRect()
+    // Выбираем узел
+    selectCircle(ctx) {
+      const circle = ctx.target;
+      this.$emit('select', this.mapToCircleModel(circle));
+    },
 
-      this.$emit('select', 
-        {
-          circleNumber, 
-          blockId: this.id,
-          coordinates: {
-            x: x + 15, // + 15 чтобы высчитывало координаты из середины круга
-            y: y + 15,
-          }
+    // Мапаем узлы
+    mapToCircleModel(circle) {
+      const {x, y, width, height} = circle.getBoundingClientRect();
+      return {
+        direction: circle.getAttribute('direction'),
+        blockId: this.id,
+        coordinates: {
+          x: x + width / 2, 
+          y: y + height / 2,
+        },
+        size: {
+          width, 
+          height,
         }
-      );
+      }
+    },
+
+    removeBlock() {
+      this.$emit('removeBlock', this.id)
     }
   }
 }

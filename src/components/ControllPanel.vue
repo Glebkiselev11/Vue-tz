@@ -15,7 +15,6 @@ export default {
   }),
   methods: {
     addBlock() {
-
       this.$emit('addBlock', {
         defaultX: this.defaultX, 
         defaultY: this.defaultY,
