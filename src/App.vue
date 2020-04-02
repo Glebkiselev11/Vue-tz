@@ -7,6 +7,7 @@
       :defaultY="block.defaultY"
       :id="block.id"
       @select="select"
+      @movingBlock="movingBlock"
     />
     
 
@@ -79,11 +80,50 @@ export default {
         first,
         second
       });
-
-      console.log(this.connectionLines)
     },
 
+    movingBlock(ctx) {
+      if (this.connectionLines.length === 0) {
+        return
+      }
 
+      this.connectionLines.forEach(line => {
+        if (line.first.blockId === ctx.blockId) {
+          const {y, x} = this.calculateCorrectCoordinatesForCircles(line.first.circleNumber, ctx)
+          line.first.coordinates.x = x;
+          line.first.coordinates.y = y;
+        }
+
+        if (line.second.blockId === ctx.blockId) {
+          const {y, x} = this.calculateCorrectCoordinatesForCircles(line.second.circleNumber, ctx)
+          line.second.coordinates.x = x;
+          line.second.coordinates.y = y;
+        }
+      })
+    },
+
+    // Высчитывает правильный координаты для точек, исходя из конкретной
+    calculateCorrectCoordinatesForCircles(circleNumber, ctx) {
+      let y = ctx.y;
+      let x = ctx.x;
+      
+      switch (circleNumber) {
+        case 1:
+          y = ctx.y - 60;
+          break;
+        case 2:
+          x = ctx.x + 60;
+          break;
+        case 3:
+          y = ctx.y + 60;
+          break;
+        case 4:
+          x = ctx.x - 60;
+          break;
+      }
+
+      return {y, x};
+    }
   }
 }
 </script>

@@ -81,6 +81,13 @@ export default {
     moving({x, y}) {
       this.$refs.block.style.left = `${x - 60}px`;
       this.$refs.block.style.top = `${y - 60}px`;
+
+      // Нужно чтобы линии тоже могли дивигаться за блоком
+      this.$emit('movingBlock', {
+        x, 
+        y, 
+        blockId: this.id
+      });
     },
 
     selectCircle(circleNumber) {
@@ -90,7 +97,10 @@ export default {
         {
           circleNumber, 
           blockId: this.id,
-          coordinates: {x: x + 15, y: y + 15}
+          coordinates: {
+            x: x + 15, // + 15 чтобы высчитывало координаты из середины круга
+            y: y + 15,
+          }
         }
       )
     }
