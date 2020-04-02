@@ -2,28 +2,35 @@
   <div id="app">
     <Block
       v-for="(block, i) of blocks"
-      :key="i"
+      :key="i + 'i'"
       :defaultX="block.defaultX"
       :defaultY="block.defaultY"
       :id="block.id"
       @select="select"
     />
+    
 
-    <Line
-      v-for="(line, i) of connectionLines"
-      :key="i"
-    />
+    <svg width="100%" height="100vh" xmlns="http://www.w3.org/2000/svg">
+      <line 
+        v-for="(line, i) of connectionLines"
+        :key="i + 'ii'"
+        :x1="line.first.coordinates.x" 
+        :y1="line.first.coordinates.y" 
+        :x2="line.second.coordinates.x" 
+        :y2="line.second.coordinates.y" 
+        stroke="black"
+      />
+    </svg>
   </div>
 </template>
 
 <script>
 import Block from '@/components/Block';
-import Line from '@/components/Line';
 
 export default {
   name: 'App',
   components: {
-    Block, Line
+    Block, 
   },
 
   data: () => ({
@@ -46,13 +53,37 @@ export default {
     ],
     
     connectionLines: [], // Связи между блоками
+    connection: [], // Собираем все нажатые узлы
   }),
 
   methods: {
     select(params) {
-      console.log(params)
-      this.connectionLines.push(params);
-    }
+      this.connection.push(params);
+
+      // Если выбрано 2 соединения
+      if (this.connection.length >= 2) {
+
+        // Если выбрано 2 разных квадрата
+        if (this.connection[0].blockId !== this.connection[1].blockId) {
+          this.createConnectionLines(this.connection[0], this.connection[1]);
+        }
+
+        setTimeout(() => {
+          this.connection = [];
+        }, 0);
+      }
+    },
+
+    createConnectionLines(first, second) {
+      this.connectionLines.push({
+        first,
+        second
+      });
+
+      console.log(this.connectionLines)
+    },
+
+
   }
 }
 </script>
@@ -68,4 +99,5 @@ export default {
 #app {
   position: relative;
 }
+
 </style>

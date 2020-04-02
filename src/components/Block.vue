@@ -90,7 +90,7 @@ export default {
         {
           circleNumber, 
           blockId: this.id,
-          coordinates: {x, y}
+          coordinates: {x: x + 15, y: y + 15}
         }
       )
     }
