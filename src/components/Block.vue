@@ -2,6 +2,7 @@
   <div 
     @mousedown="mousedown"
     @mouseup="mouseup"
+    
     class="block-wrap"
     ref="block"
   > 
@@ -41,11 +42,11 @@ export default {
   name: 'Block',
   props: {
     defaultX: {
-      type: Number,
+      type: [Number, String],
       default: 50,
     },
     defaultY: {
-      type: Number,
+      type: [Number, String],
       default: 50
     },
     id: {
@@ -102,7 +103,7 @@ export default {
             y: y + 15,
           }
         }
-      )
+      );
     }
   }
 }

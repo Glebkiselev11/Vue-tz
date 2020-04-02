@@ -1,5 +1,9 @@
 <template>
   <div id="app">
+    <ControllPanel
+      @addBlock="addBlock"
+    />
+    
     <Block
       v-for="(block, i) of blocks"
       :key="i + 'i'"
@@ -11,7 +15,11 @@
     />
     
 
-    <svg width="100%" height="100vh" xmlns="http://www.w3.org/2000/svg">
+    <svg 
+      width="100%" 
+      height="100vh" 
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <line 
         v-for="(line, i) of connectionLines"
         :key="i + 'ii'"
@@ -27,11 +35,13 @@
 
 <script>
 import Block from '@/components/Block';
+import ControllPanel from '@/components/ControllPanel';
 
 export default {
   name: 'App',
   components: {
-    Block, 
+    Block,
+    ControllPanel,
   },
 
   data: () => ({
@@ -50,7 +60,7 @@ export default {
         id: 3,
         defaultX: 500,
         defaultY: 50,
-      },
+      }
     ],
     
     connectionLines: [], // Связи между блоками
@@ -58,23 +68,34 @@ export default {
   }),
 
   methods: {
+    addBlock({defaultX, defaultY}) {
+      this.blocks.push({
+        id: this.blocks[this.blocks.length - 1].id + 1,
+        defaultX,
+        defaultY,
+      })
+    },
+
+    // Записывает, что выбрана точка
     select(params) {
       this.connection.push(params);
 
-      // Если выбрано 2 соединения
+      // Если выбрано 2 точки
       if (this.connection.length >= 2) {
 
-        // Если выбрано 2 разных квадрата
+        // Если выбрано 2 разных квадрата, то соответсвтенно создаем линию
         if (this.connection[0].blockId !== this.connection[1].blockId) {
           this.createConnectionLines(this.connection[0], this.connection[1]);
         }
 
+        // В конце всего евент лупа очищаем массив выбранных точек
         setTimeout(() => {
           this.connection = [];
         }, 0);
       }
     },
 
+    // Создает соеденительную линию
     createConnectionLines(first, second) {
       this.connectionLines.push({
         first,
@@ -82,6 +103,7 @@ export default {
       });
     },
 
+    // При перемещении блока - перерисовываем линии по новым координатам
     movingBlock(ctx) {
       if (this.connectionLines.length === 0) {
         return
@@ -139,5 +161,6 @@ export default {
 #app {
   position: relative;
 }
+
 
 </style>
